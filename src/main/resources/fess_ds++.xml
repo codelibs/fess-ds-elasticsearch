@@ -5,7 +5,7 @@
 	<component name="esDataStore" class="org.codelibs.fess.ds.elasticsearch.EsDataStore">
 		<postConstruct name="register"></postConstruct>
 	</component>
-	<component name="esDataStore" class="org.codelibs.fess.ds.elasticsearch.EsListDataStore">
+	<component name="esListDataStore" class="org.codelibs.fess.ds.elasticsearch.EsListDataStore">
 		<postConstruct name="register"></postConstruct>
 	</component>
 </components>
