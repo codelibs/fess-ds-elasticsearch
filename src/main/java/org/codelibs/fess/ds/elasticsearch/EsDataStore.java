@@ -15,15 +15,14 @@
  */
 package org.codelibs.fess.ds.elasticsearch;
 
-import static org.codelibs.core.stream.StreamUtil.split;
-
-import java.net.InetAddress;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
 import org.codelibs.core.lang.StringUtil;
+import org.codelibs.elasticsearch.client.HttpClient;
 import org.codelibs.fess.Constants;
 import org.codelibs.fess.app.service.FailureUrlService;
 import org.codelibs.fess.crawler.exception.CrawlingAccessException;
@@ -40,36 +39,33 @@ import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.common.settings.Settings;
-import org.elasticsearch.common.transport.TransportAddress;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHits;
-import org.elasticsearch.transport.client.PreBuiltTransportClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class EsDataStore extends AbstractDataStore {
-    private static final String PREFERENCE = "preference";
-
-    private static final String QUERY = "query";
-
-    private static final String FIELDS = "fields";
-
-    private static final String SIZE = "size";
-
-    private static final String TYPE = "type";
-
-    private static final String TIMEOUT = "timeout";
-
-    private static final String SCROLL = "scroll";
-
-    private static final String INDEX = "index";
-
-    private static final String HOSTS = "hosts";
-
-    private static final String SETTINGS_PREFIX = "settings.";
 
     private static final Logger logger = LoggerFactory.getLogger(EsDataStore.class);
+
+    protected static final String PREFERENCE = "preference";
+
+    protected static final String QUERY = "query";
+
+    protected static final String FIELDS = "fields";
+
+    protected static final String SIZE = "size";
+
+    protected static final String TIMEOUT = "timeout";
+
+    protected static final String SCROLL = "scroll";
+
+    protected static final String INDEX = "index";
+
+    protected static final String SETTINGS_PREFIX = "settings.";
+
+    protected static final String SETTINGS_PATTERN = "^settings\\.";
 
     protected String getName() {
         return "Elasticsearch";
@@ -78,36 +74,17 @@ public class EsDataStore extends AbstractDataStore {
     @Override
     protected void storeData(final DataConfig dataConfig, final IndexUpdateCallback callback, final Map<String, String> paramMap,
             final Map<String, String> scriptMap, final Map<String, Object> defaultDataMap) {
-        final String hostsStr = paramMap.get(HOSTS);
-        if (StringUtil.isBlank(hostsStr)) {
-            logger.info("hosts is empty.");
-            return;
-        }
 
         final long readInterval = getReadInterval(paramMap);
 
-        final Settings settings =
-                Settings.builder()
-                        .putProperties(paramMap.entrySet().stream().filter(e -> e.getKey().startsWith(SETTINGS_PREFIX)).collect(
-                                Collectors.toMap(e -> e.getKey().replaceFirst("^settings\\.", StringUtil.EMPTY), e -> e.getValue())),
-                                s -> s)
-                        .build();
-        logger.info("Connecting to " + hostsStr + " with [" + settings.toDelimitedString(',') + "]");
-        final TransportAddress[] addresses = split(hostsStr, ",").get(stream -> stream.map(h -> {
-            final String[] values = h.trim().split(":");
-            try {
-                if (values.length == 1) {
-                    return new TransportAddress(InetAddress.getByName(values[0]), 9300);
-                } else if (values.length == 2) {
-                    return new TransportAddress(InetAddress.getByName(values[0]), Integer.parseInt(values[1]));
-                }
-            } catch (final Exception e) {
-                logger.warn("Failed to parse address: " + h, e);
-            }
-            return null;
-        }).filter(v -> v != null).toArray(n -> new TransportAddress[n]));
-        try (PreBuiltTransportClient client = new PreBuiltTransportClient(settings)) {
-            client.addTransportAddresses(addresses);
+        final Settings settings = Settings.builder()
+                .putProperties(
+                        paramMap.entrySet().stream().filter(e -> e.getKey().startsWith(SETTINGS_PREFIX)).collect(Collectors
+                                .toMap(e -> e.getKey().replaceFirst(SETTINGS_PATTERN, StringUtil.EMPTY), Entry<String, String>::getValue)),
+                        s -> s)
+                .build();
+
+        try (Client client = new HttpClient(settings, null);) {
             processData(dataConfig, callback, paramMap, scriptMap, defaultDataMap, readInterval, client);
         }
     }
@@ -125,9 +102,6 @@ public class EsDataStore extends AbstractDataStore {
         final String scroll = paramMap.containsKey(SCROLL) ? paramMap.get(SCROLL).trim() : "1m";
         final String timeout = paramMap.containsKey(TIMEOUT) ? paramMap.get(TIMEOUT).trim() : "1m";
         final SearchRequestBuilder builder = client.prepareSearch(indices);
-        if (paramMap.containsKey(TYPE)) {
-            builder.setTypes(paramMap.get(TYPE).trim().split(","));
-        }
         if (paramMap.containsKey(SIZE)) {
             builder.setSize(Integer.parseInt(paramMap.get(SIZE)));
         }
@@ -161,9 +135,12 @@ public class EsDataStore extends AbstractDataStore {
                     final Map<String, Object> resultMap = new LinkedHashMap<>();
                     resultMap.putAll(paramMap);
                     resultMap.put("index", hit.getIndex());
-                    resultMap.put("type", hit.getType());
                     resultMap.put("id", hit.getId());
-                    resultMap.put("version", Long.valueOf(hit.getVersion()));
+                    resultMap.put("version", hit.getVersion());
+                    resultMap.put("clusterAlias", hit.getClusterAlias());
+                    resultMap.put("primaryTerm", hit.getPrimaryTerm());
+                    resultMap.put("score", hit.getScore());
+                    resultMap.put("seqNo", hit.getSeqNo());
                     resultMap.put("hit", hit);
                     resultMap.put("source", hit.getSourceAsMap());
                     resultMap.put("crawlingConfig", dataConfig);
@@ -219,19 +196,19 @@ public class EsDataStore extends AbstractDataStore {
                                 loop = false;
                             }
                         } else {
-                            url = hit.getIndex() + "/" + hit.getType() + "/" + hit.getId();
+                            url = hit.getIndex() + "/_doc/" + hit.getId();
                         }
                         final FailureUrlService failureUrlService = ComponentUtil.getComponent(FailureUrlService.class);
                         failureUrlService.store(dataConfig, errorName, url, target);
                     } catch (final Throwable t) {
                         logger.warn("Crawling Access Exception at : " + dataMap, t);
-                        final String url = hit.getIndex() + "/" + hit.getType() + "/" + hit.getId();
+                        final String url = hit.getIndex() + "/_doc/" + hit.getId();
                         final FailureUrlService failureUrlService = ComponentUtil.getComponent(FailureUrlService.class);
                         failureUrlService.store(dataConfig, t.getClass().getCanonicalName(), url, t);
                     }
 
                     if (bulkRequest != null) {
-                        bulkRequest.add(client.prepareDelete(hit.getIndex(), hit.getType(), hit.getId()));
+                        bulkRequest.add(client.prepareDelete().setIndex(hit.getIndex()).setId(hit.getId()));
                     }
 
                     if (readInterval > 0) {
