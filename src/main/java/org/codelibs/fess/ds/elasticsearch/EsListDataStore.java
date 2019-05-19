@@ -31,7 +31,7 @@ public class EsListDataStore extends EsDataStore {
     private static final Logger logger = LoggerFactory.getLogger(EsListDataStore.class);
 
     protected String getName() {
-        return "Elasticsearch List";
+        return "ElasticsearchList";
     }
 
     @Override
