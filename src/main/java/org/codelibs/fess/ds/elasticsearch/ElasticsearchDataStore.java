@@ -45,9 +45,9 @@ import org.elasticsearch.search.SearchHits;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class EsDataStore extends AbstractDataStore {
+public class ElasticsearchDataStore extends AbstractDataStore {
 
-    private static final Logger logger = LoggerFactory.getLogger(EsDataStore.class);
+    private static final Logger logger = LoggerFactory.getLogger(ElasticsearchDataStore.class);
 
     protected static final String PREFERENCE = "preference";
 
@@ -68,7 +68,7 @@ public class EsDataStore extends AbstractDataStore {
     protected static final String SETTINGS_PATTERN = "^settings\\.";
 
     protected String getName() {
-        return "Elasticsearch";
+        return this.getClass().getSimpleName();
     }
 
     @Override

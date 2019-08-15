@@ -15,12 +15,11 @@
  */
 package org.codelibs.fess.ds.elasticsearch;
 
-import org.codelibs.fess.ds.elasticsearch.EsDataStore;
 import org.codelibs.fess.util.ComponentUtil;
-import org.dbflute.utflute.lastadi.ContainerTestCase;
+import org.dbflute.utflute.lastaflute.LastaFluteTestCase;
 
-public class EsDataStoreTest extends ContainerTestCase {
-    public EsDataStore dataStore;
+public class ElasticsearchDataStoreTest extends LastaFluteTestCase {
+    public ElasticsearchDataStore dataStore;
 
     @Override
     protected String prepareConfigFile() {
@@ -35,7 +34,7 @@ public class EsDataStoreTest extends ContainerTestCase {
     @Override
     public void setUp() throws Exception {
         super.setUp();
-        dataStore = new EsDataStore();
+        dataStore = new ElasticsearchDataStore();
     }
 
     @Override

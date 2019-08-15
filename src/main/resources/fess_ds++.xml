@@ -2,10 +2,10 @@
 <!DOCTYPE components PUBLIC "-//DBFLUTE//DTD LastaDi 1.0//EN"
 	"http://dbflute.org/meta/lastadi10.dtd">
 <components>
-	<component name="esDataStore" class="org.codelibs.fess.ds.elasticsearch.EsDataStore">
+	<component name="elasticsearchDataStore" class="org.codelibs.fess.ds.elasticsearch.ElasticsearchDataStore">
 		<postConstruct name="register"></postConstruct>
 	</component>
-	<component name="esListDataStore" class="org.codelibs.fess.ds.elasticsearch.EsListDataStore">
+	<component name="elasticsearchListDataStore" class="org.codelibs.fess.ds.elasticsearch.ElasticsearchListDataStore">
 		<postConstruct name="register"></postConstruct>
 	</component>
 </components>

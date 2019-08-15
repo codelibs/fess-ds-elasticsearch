@@ -27,11 +27,11 @@ import org.codelibs.fess.util.ComponentUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class EsListDataStore extends EsDataStore {
-    private static final Logger logger = LoggerFactory.getLogger(EsListDataStore.class);
+public class ElasticsearchListDataStore extends ElasticsearchDataStore {
+    private static final Logger logger = LoggerFactory.getLogger(ElasticsearchListDataStore.class);
 
     protected String getName() {
-        return "ElasticsearchList";
+        return this.getClass().getSimpleName();
     }
 
     @Override
