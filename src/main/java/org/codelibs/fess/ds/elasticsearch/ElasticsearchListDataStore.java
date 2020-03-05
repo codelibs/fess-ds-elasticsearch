@@ -46,7 +46,7 @@ public class ElasticsearchListDataStore extends ElasticsearchDataStore {
             }
         }
         final CrawlerClientFactory crawlerClientFactory = ComponentUtil.getCrawlerClientFactory();
-        dataConfig.initializeClientFactory(crawlerClientFactory);
+        dataConfig.initializeClientFactory(() -> crawlerClientFactory);
         try {
             final FileListIndexUpdateCallbackImpl fileListIndexUpdateCallback =
                     new FileListIndexUpdateCallbackImpl(callback, crawlerClientFactory, nThreads);
