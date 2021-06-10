@@ -111,6 +111,7 @@ public class ElasticsearchDataStore extends AbstractDataStore {
         builder.setQuery(QueryBuilders.wrapperQuery(paramMap.containsKey(QUERY) ? paramMap.get(QUERY).trim() : "{\"match_all\":{}}"));
         builder.setScroll(scroll);
         builder.setPreference(paramMap.containsKey(PREFERENCE) ? paramMap.get(PREFERENCE).trim() : Constants.SEARCH_PREFERENCE_LOCAL);
+        final String scriptType = getScriptType(paramMap);
         try {
             SearchResponse response = builder.execute().actionGet(timeout);
 
@@ -155,7 +156,7 @@ public class ElasticsearchDataStore extends AbstractDataStore {
                     crawlingContext.put("doc", dataMap);
                     resultMap.put("crawlingContext", crawlingContext);
                     for (final Map.Entry<String, String> entry : scriptMap.entrySet()) {
-                        final Object convertValue = convertValue(entry.getValue(), resultMap);
+                        final Object convertValue = convertValue(scriptType, entry.getValue(), resultMap);
                         if (convertValue != null) {
                             dataMap.put(entry.getKey(), convertValue);
                         }
