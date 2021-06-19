@@ -1,4 +1,5 @@
-Elasticsearch Data Store for Fess [![Build Status](https://travis-ci.org/codelibs/fess-ds-elasticsearch.svg?branch=master)](https://travis-ci.org/codelibs/fess-ds-elasticsearch)
+Elasticsearch Data Store for Fess
+[![Java CI with Maven](https://github.com/codelibs/fess-ds-elasticsearch/actions/workflows/maven.yml/badge.svg)](https://github.com/codelibs/fess-ds-elasticsearch/actions/workflows/maven.yml)
 ==========================
 
 ## Overview
