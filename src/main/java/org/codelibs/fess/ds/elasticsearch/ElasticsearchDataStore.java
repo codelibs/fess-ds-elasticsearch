@@ -67,6 +67,7 @@ public class ElasticsearchDataStore extends AbstractDataStore {
 
     protected static final String SETTINGS_PATTERN = "^settings\\.";
 
+    @Override
     protected String getName() {
         return this.getClass().getSimpleName();
     }
@@ -92,7 +93,7 @@ public class ElasticsearchDataStore extends AbstractDataStore {
     protected void processData(final DataConfig dataConfig, final IndexUpdateCallback callback, final Map<String, String> paramMap,
             final Map<String, String> scriptMap, final Map<String, Object> defaultDataMap, final long readInterval, final Client client) {
 
-        final boolean deleteProcessedDoc = paramMap.getOrDefault("delete.processed.doc", Constants.FALSE).equalsIgnoreCase(Constants.TRUE);
+        final boolean deleteProcessedDoc = Constants.TRUE.equalsIgnoreCase(paramMap.getOrDefault("delete.processed.doc", Constants.FALSE));
         final String[] indices;
         if (paramMap.containsKey(INDEX)) {
             indices = paramMap.get(INDEX).trim().split(",");
@@ -131,8 +132,7 @@ public class ElasticsearchDataStore extends AbstractDataStore {
                         break;
                     }
 
-                    final Map<String, Object> dataMap = new HashMap<>();
-                    dataMap.putAll(defaultDataMap);
+                    final Map<String, Object> dataMap = new HashMap<>(defaultDataMap);
                     final Map<String, Object> resultMap = new LinkedHashMap<>();
                     resultMap.putAll(paramMap);
                     resultMap.put("index", hit.getIndex());

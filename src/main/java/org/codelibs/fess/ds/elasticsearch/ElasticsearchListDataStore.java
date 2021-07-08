@@ -30,6 +30,7 @@ import org.slf4j.LoggerFactory;
 public class ElasticsearchListDataStore extends ElasticsearchDataStore {
     private static final Logger logger = LoggerFactory.getLogger(ElasticsearchListDataStore.class);
 
+    @Override
     protected String getName() {
         return this.getClass().getSimpleName();
     }
