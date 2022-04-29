@@ -21,6 +21,7 @@ import org.codelibs.fess.Constants;
 import org.codelibs.fess.crawler.client.CrawlerClientFactory;
 import org.codelibs.fess.ds.callback.FileListIndexUpdateCallbackImpl;
 import org.codelibs.fess.ds.callback.IndexUpdateCallback;
+import org.codelibs.fess.entity.DataStoreParams;
 import org.codelibs.fess.es.config.exentity.DataConfig;
 import org.codelibs.fess.exception.DataStoreException;
 import org.codelibs.fess.util.ComponentUtil;
@@ -36,12 +37,12 @@ public class ElasticsearchListDataStore extends ElasticsearchDataStore {
     }
 
     @Override
-    protected void storeData(final DataConfig dataConfig, final IndexUpdateCallback callback, final Map<String, String> paramMap,
+    protected void storeData(final DataConfig dataConfig, final IndexUpdateCallback callback, final DataStoreParams paramMap,
             final Map<String, String> scriptMap, final Map<String, Object> defaultDataMap) {
         int nThreads = 1;
         if (paramMap.containsKey(Constants.NUM_OF_THREADS)) {
             try {
-                nThreads = Integer.parseInt(paramMap.get(Constants.NUM_OF_THREADS));
+                nThreads = Integer.parseInt(paramMap.getAsString(Constants.NUM_OF_THREADS));
             } catch (final NumberFormatException e) {
                 logger.warn(Constants.NUM_OF_THREADS + " is not int value.", e);
             }
