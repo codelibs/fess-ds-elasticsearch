@@ -44,7 +44,7 @@ public class ElasticsearchListDataStore extends ElasticsearchDataStore {
             try {
                 nThreads = Integer.parseInt(paramMap.getAsString(Constants.NUM_OF_THREADS));
             } catch (final NumberFormatException e) {
-                logger.warn(Constants.NUM_OF_THREADS + " is not int value.", e);
+                logger.warn("{} is not int value.", Constants.NUM_OF_THREADS, e);
             }
         }
         final CrawlerClientFactory crawlerClientFactory = ComponentUtil.getCrawlerClientFactory();

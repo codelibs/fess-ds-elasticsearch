@@ -129,6 +129,7 @@ public class ElasticsearchDataStore extends AbstractDataStore {
                     }
 
                     final StatsKeyObject statsKey = new StatsKeyObject(hit.getId());
+                    paramMap.put(Constants.CRAWLER_STATS_KEY, statsKey);
                     final Map<String, Object> dataMap = new HashMap<>(defaultDataMap);
                     try {
                         crawlerStatsHelper.begin(statsKey);
@@ -170,14 +171,18 @@ public class ElasticsearchDataStore extends AbstractDataStore {
                             }
                         }
 
+                        if (dataMap.get("url") instanceof String statsUrl) {
+                            statsKey.setUrl(statsUrl);
+                        }
+
                         callback.store(paramMap, dataMap);
                         crawlerStatsHelper.record(statsKey, StatsAction.FINISHED);
                     } catch (final CrawlingAccessException e) {
-                        logger.warn("Crawling Access Exception at : " + dataMap, e);
+                        logger.warn("Crawling Access Exception at : {}", dataMap, e);
 
                         Throwable target = e;
-                        if (target instanceof MultipleCrawlingAccessException) {
-                            final Throwable[] causes = ((MultipleCrawlingAccessException) target).getCauses();
+                        if (target instanceof MultipleCrawlingAccessException ex) {
+                            final Throwable[] causes = ex.getCauses();
                             if (causes.length > 0) {
                                 target = causes[causes.length - 1];
                             }
@@ -204,7 +209,7 @@ public class ElasticsearchDataStore extends AbstractDataStore {
                         failureUrlService.store(dataConfig, errorName, url, target);
                         crawlerStatsHelper.record(statsKey, StatsAction.ACCESS_EXCEPTION);
                     } catch (final Throwable t) {
-                        logger.warn("Crawling Access Exception at : " + dataMap, t);
+                        logger.warn("Crawling Access Exception at : {}", dataMap, t);
                         final String url = hit.getIndex() + "/_doc/" + hit.getId();
                         final FailureUrlService failureUrlService = ComponentUtil.getComponent(FailureUrlService.class);
                         failureUrlService.store(dataConfig, t.getClass().getCanonicalName(), url, t);
