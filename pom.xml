@@ -4,7 +4,7 @@
 	<artifactId>fess-ds-elasticsearch</artifactId>
 	<packaging>jar</packaging>
 	<name>Elasticsearch Data Store</name>
-	<version>14.13.0</version>
+	<version>14.13.1-SNAPSHOT</version>
 	<scm>
 		<connection>scm:git:git@github.com:codelibs/fess-ds-elasticsearch.git</connection>
 		<developerConnection>scm:git:git@github.com:codelibs/fess-ds-elasticsearch.git</developerConnection>
