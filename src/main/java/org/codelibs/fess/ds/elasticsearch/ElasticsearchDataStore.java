@@ -20,6 +20,8 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codelibs.core.lang.StringUtil;
 import org.codelibs.fesen.client.HttpClient;
 import org.codelibs.fess.Constants;
@@ -45,12 +47,10 @@ import org.opensearch.common.settings.Settings;
 import org.opensearch.index.query.QueryBuilders;
 import org.opensearch.search.SearchHit;
 import org.opensearch.search.SearchHits;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class ElasticsearchDataStore extends AbstractDataStore {
 
-    private static final Logger logger = LoggerFactory.getLogger(ElasticsearchDataStore.class);
+    private static final Logger logger = LogManager.getLogger(ElasticsearchDataStore.class);
 
     protected static final String PREFERENCE = "preference";
 

@@ -17,6 +17,8 @@ package org.codelibs.fess.ds.elasticsearch;
 
 import java.util.Map;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codelibs.fess.Constants;
 import org.codelibs.fess.crawler.client.CrawlerClientFactory;
 import org.codelibs.fess.ds.callback.FileListIndexUpdateCallbackImpl;
@@ -25,11 +27,9 @@ import org.codelibs.fess.entity.DataStoreParams;
 import org.codelibs.fess.es.config.exentity.DataConfig;
 import org.codelibs.fess.exception.DataStoreException;
 import org.codelibs.fess.util.ComponentUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class ElasticsearchListDataStore extends ElasticsearchDataStore {
-    private static final Logger logger = LoggerFactory.getLogger(ElasticsearchListDataStore.class);
+    private static final Logger logger = LogManager.getLogger(ElasticsearchListDataStore.class);
 
     @Override
     protected String getName() {
