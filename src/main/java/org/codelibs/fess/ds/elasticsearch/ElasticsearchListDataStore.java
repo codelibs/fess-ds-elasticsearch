@@ -24,8 +24,8 @@ import org.codelibs.fess.crawler.client.CrawlerClientFactory;
 import org.codelibs.fess.ds.callback.FileListIndexUpdateCallbackImpl;
 import org.codelibs.fess.ds.callback.IndexUpdateCallback;
 import org.codelibs.fess.entity.DataStoreParams;
-import org.codelibs.fess.es.config.exentity.DataConfig;
 import org.codelibs.fess.exception.DataStoreException;
+import org.codelibs.fess.opensearch.config.exentity.DataConfig;
 import org.codelibs.fess.util.ComponentUtil;
 
 public class ElasticsearchListDataStore extends ElasticsearchDataStore {
