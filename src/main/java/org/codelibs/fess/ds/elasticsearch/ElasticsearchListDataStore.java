@@ -28,8 +28,19 @@ import org.codelibs.fess.exception.DataStoreException;
 import org.codelibs.fess.opensearch.config.exentity.DataConfig;
 import org.codelibs.fess.util.ComponentUtil;
 
+/**
+ * DataStore for Elasticsearch.
+ * This class is for listing files from Elasticsearch.
+ */
 public class ElasticsearchListDataStore extends ElasticsearchDataStore {
     private static final Logger logger = LogManager.getLogger(ElasticsearchListDataStore.class);
+
+    /**
+     * Constructor.
+     */
+    public ElasticsearchListDataStore() {
+        super();
+    }
 
     @Override
     protected String getName() {
