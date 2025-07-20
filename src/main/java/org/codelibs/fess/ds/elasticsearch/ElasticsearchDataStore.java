@@ -48,27 +48,64 @@ import org.opensearch.search.SearchHit;
 import org.opensearch.search.SearchHits;
 import org.opensearch.transport.client.Client;
 
+/**
+ * DataStore for Elasticsearch.
+ */
 public class ElasticsearchDataStore extends AbstractDataStore {
 
     private static final Logger logger = LogManager.getLogger(ElasticsearchDataStore.class);
 
+    /**
+     * A preference of which shard replicas to execute the search request on.
+     */
     protected static final String PREFERENCE = "preference";
 
+    /**
+     * The query to execute.
+     */
     protected static final String QUERY = "query";
 
+    /**
+     * The fields to retrieve.
+     */
     protected static final String FIELDS = "fields";
 
+    /**
+     * The number of hits to return.
+     */
     protected static final String SIZE = "size";
 
+    /**
+     * The timeout for the request.
+     */
     protected static final String TIMEOUT = "timeout";
 
+    /**
+     * The scroll timeout.
+     */
     protected static final String SCROLL = "scroll";
 
+    /**
+     * The index to search.
+     */
     protected static final String INDEX = "index";
 
+    /**
+     * The prefix for Elasticsearch settings.
+     */
     protected static final String SETTINGS_PREFIX = "settings.";
 
+    /**
+     * The pattern for Elasticsearch settings. The value is {@code ^settings\.}.
+     */
     protected static final String SETTINGS_PATTERN = "^settings\\.";
+
+    /**
+     * Constructor.
+     */
+    public ElasticsearchDataStore() {
+        super();
+    }
 
     @Override
     protected String getName() {
@@ -91,8 +128,19 @@ public class ElasticsearchDataStore extends AbstractDataStore {
         }
     }
 
+    /**
+     * Process the data from Elasticsearch.
+     * @param dataConfig The data configuration.
+     * @param callback The callback to index the data.
+     * @param paramMap The parameters for the data store.
+     * @param scriptMap The script map.
+     * @param defaultDataMap The default data map.
+     * @param readInterval The read interval.
+     * @param client The Elasticsearch client.
+     */
     protected void processData(final DataConfig dataConfig, final IndexUpdateCallback callback, final DataStoreParams paramMap,
             final Map<String, String> scriptMap, final Map<String, Object> defaultDataMap, final long readInterval, final Client client) {
+
         final CrawlerStatsHelper crawlerStatsHelper = ComponentUtil.getCrawlerStatsHelper();
         final boolean deleteProcessedDoc = Constants.TRUE.equalsIgnoreCase(paramMap.getAsString("delete.processed.doc", Constants.FALSE));
         final String[] indices = paramMap.getAsString(INDEX, "_all").trim().split(",");
