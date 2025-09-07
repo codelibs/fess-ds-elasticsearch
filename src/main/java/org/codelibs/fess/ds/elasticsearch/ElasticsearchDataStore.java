@@ -118,10 +118,15 @@ public class ElasticsearchDataStore extends AbstractDataStore {
 
         final long readInterval = getReadInterval(paramMap);
 
-        final Settings settings = Settings.builder().putProperties(
-                paramMap.asMap().entrySet().stream().filter(e -> e.getKey().startsWith(SETTINGS_PREFIX)).collect(
-                        Collectors.toMap(e -> e.getKey().replaceFirst(SETTINGS_PATTERN, StringUtil.EMPTY), e -> (String) e.getValue())),
-                s -> s).build();
+        final Settings settings = Settings.builder()
+                .putProperties(paramMap.asMap()
+                        .entrySet()
+                        .stream()
+                        .filter(e -> e.getKey().startsWith(SETTINGS_PREFIX))
+                        .collect(Collectors.toMap(e -> e.getKey().replaceFirst(SETTINGS_PATTERN, StringUtil.EMPTY),
+                                e -> (String) e.getValue())),
+                        s -> s)
+                .build();
 
         try (Client client = new HttpClient(settings, null);) {
             processData(dataConfig, callback, paramMap, scriptMap, defaultDataMap, readInterval, client);
