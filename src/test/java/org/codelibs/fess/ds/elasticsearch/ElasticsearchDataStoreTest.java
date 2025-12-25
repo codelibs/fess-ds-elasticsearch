@@ -300,9 +300,7 @@ public class ElasticsearchDataStoreTest extends LastaFluteTestCase {
         params.put("other.param", "value");
 
         Map<String, Object> paramsMap = params.asMap();
-        long settingsCount = paramsMap.entrySet().stream()
-                .filter(e -> ((String) e.getKey()).startsWith("settings."))
-                .count();
+        long settingsCount = paramsMap.entrySet().stream().filter(e -> ((String) e.getKey()).startsWith("settings.")).count();
 
         assertEquals(2, settingsCount);
     }
@@ -362,12 +360,10 @@ public class ElasticsearchDataStoreTest extends LastaFluteTestCase {
         Map<String, Object> paramsMap = params.asMap();
         Map<String, String> settingsMap = new HashMap<>();
 
-        paramsMap.entrySet().stream()
-                .filter(e -> ((String) e.getKey()).startsWith("settings."))
-                .forEach(e -> {
-                    String key = ((String) e.getKey()).replaceFirst("^settings\\.", "");
-                    settingsMap.put(key, (String) e.getValue());
-                });
+        paramsMap.entrySet().stream().filter(e -> ((String) e.getKey()).startsWith("settings.")).forEach(e -> {
+            String key = ((String) e.getKey()).replaceFirst("^settings\\.", "");
+            settingsMap.put(key, (String) e.getValue());
+        });
 
         assertEquals(3, settingsMap.size());
         assertEquals("test-cluster", settingsMap.get("cluster.name"));
