@@ -15,12 +15,14 @@
  */
 package org.codelibs.fess.ds.elasticsearch;
 
+import org.junit.jupiter.api.TestInfo;
+
 import org.codelibs.fess.Constants;
 import org.codelibs.fess.entity.DataStoreParams;
 import org.codelibs.fess.util.ComponentUtil;
-import org.dbflute.utflute.lastaflute.LastaFluteTestCase;
+import org.codelibs.fess.ds.elasticsearch.UnitDsTestCase;
 
-public class ElasticsearchListDataStoreTest extends LastaFluteTestCase {
+public class ElasticsearchListDataStoreTest extends UnitDsTestCase {
     private ElasticsearchListDataStore dataStore;
 
     @Override
@@ -34,15 +36,15 @@ public class ElasticsearchListDataStoreTest extends LastaFluteTestCase {
     }
 
     @Override
-    public void setUp() throws Exception {
-        super.setUp();
+    public void setUp(TestInfo testInfo) throws Exception {
+        super.setUp(testInfo);
         dataStore = new ElasticsearchListDataStore();
     }
 
     @Override
-    public void tearDown() throws Exception {
+    public void tearDown(TestInfo testInfo) throws Exception {
         ComponentUtil.setFessConfig(null);
-        super.tearDown();
+        super.tearDown(testInfo);
     }
 
     /**
